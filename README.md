@@ -1,4 +1,4 @@
-# 🚀 Projeto 02: Infraestrutura Automatizada WordPress (Vagrant + Ansible + Docker)
+# Projeto 02: Infraestrutura Automatizada WordPress (Vagrant + Ansible + Docker)
 
 Este projeto foi desenvolvido individualmente para a disciplina de **Administração de Sistemas Abertos (Período 2026.1)** no Instituto Federal da Paraíba (IFPB). O objetivo principal é criar uma infraestrutura totalmente automatizada via código (Infrastructure as Code) para rodar uma aplicação WordPress protegida por um Proxy Reverso/Load Balancer Nginx.
 
