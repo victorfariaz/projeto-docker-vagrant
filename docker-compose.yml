@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+  wordpress:
+    driver: bridge
+
+volumes:
+  app:
+  my:
+
+services:
+  webproxy:
+    image: victorfariaz/nginx-proxy-victor:latest
+    container_name: webproxy
+    ports:
+      - "8080:8080"
+    networks:
+      - wordpress
+    depends_on:
+      - webserver
+
+  webserver:
+    image: wordpress:latest
+    container_name: webserver
+    restart: always
+    environment:
+      # Alterado para ler do .env usando o cifrão correto
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER: ${MYSQL_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DB_DATABASE}
+    volumes:
+      - app:/var/www/html
+    networks:
+      - wordpress
+    depends_on:
+      - database
+
+  database:
+    image: mysql:8.0
+    container_name: database
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB_DATABASE}
+      MYSQL_USER: ${MYSQL_DB_USER}
+      MYSQL_PASSWORD: ${MYSQL_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_ROOT_PASSWORD}
+    volumes:
+      - my:/var/lib/mysql
+    networks:
+      - wordpress
