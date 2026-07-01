@@ -1,0 +1,64 @@
+---
+- name: Provisionamento da VM com Docker e Wordpress
+  hosts: all
+  become: true
+  tasks:
+    - name: Atualizar o cache do apt e realizar upgrade dos pacotes
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Instalar dependencias basicas do sistema
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+
+    - name: Adicionar chave GPG oficial do Docker
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Adicionar repositorio oficial do Docker
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_facts['distribution_release'] }} stable"
+        state: present
+
+    - name: Instalar o Docker Engine e pacotes do Compose
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Certificar que o servico do Docker esta ativo
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Criar o diretorio da aplicacao interna na VM
+      file:
+        path: /opt/wordpress-app
+        state: directory
+        mode: '0755'
+
+    - name: Copiar arquivos de configuracao para a VM
+      copy:
+        src: "{{ item }}"
+        dest: "/opt/wordpress-app/{{ item }}"
+        mode: '0644'
+      loop:
+        - ./docker-compose.yml
+        - ./.env
+
+    - name: Inicializar a stack de containers baixando a imagem do Docker Hub
+      command: docker compose up -d
+      args:
+        chdir: /opt/wordpress-app
