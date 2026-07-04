@@ -43,7 +43,6 @@
         state: started
         enabled: yes
 
-    # --- TASK REQUISITADA PELO PROFESSOR INSERIDA AQUI ---
     - name: Adicionar o usuario vagrant ao grupo do docker
       user:
         name: vagrant
