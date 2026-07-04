@@ -43,6 +43,13 @@
         state: started
         enabled: yes
 
+    # --- TASK REQUISITADA PELO PROFESSOR INSERIDA AQUI ---
+    - name: Adicionar o usuario vagrant ao grupo do docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
     - name: Criar o diretorio da aplicacao interna na VM
       file:
         path: /opt/wordpress-app
